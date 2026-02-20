@@ -86,7 +86,7 @@ class NetworkManager(
                             val hostIpStr = packet.address.hostAddress ?: "0.0.0.0"
                             onHostFound(hostIpStr, seed)
                         }
-                    } catch (e: SocketTimeoutException) {
+                    } catch (_: SocketTimeoutException) {
                         break
                     }
                 }
