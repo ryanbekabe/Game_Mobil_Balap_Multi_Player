@@ -1,0 +1,307 @@
+package com.hanyajasa.gamemobilbalapmultiplayer
+
+import android.graphics.Color
+import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import java.net.Inet4Address
+import java.net.NetworkInterface
+import java.util.*
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var menuLayout: View
+    private lateinit var gameLayout: View
+    private lateinit var gameView: GameView
+    private lateinit var statusText: TextView
+    private lateinit var myIpText: TextView
+    private lateinit var nameInput: EditText
+    private lateinit var ipInput: EditText
+    private lateinit var playAgainBtn: Button
+    
+    private var networkManager: NetworkManager? = null
+    private var playerId = UUID.randomUUID().toString()
+    private var hostIp: String? = null
+
+    // Input states as class properties
+    private var isLeftPressed = false
+    private var isRightPressed = false
+    private var isAccelPressed = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        menuLayout = findViewById(R.id.menuLayout)
+        gameLayout = findViewById(R.id.gameLayout)
+        gameView = findViewById(R.id.gameView)
+        statusText = findViewById(R.id.statusText)
+        myIpText = findViewById(R.id.myIpText)
+        nameInput = findViewById(R.id.nameInput)
+        ipInput = findViewById(R.id.ipInput)
+        playAgainBtn = findViewById(R.id.playAgainBtn)
+
+        findViewById<Button>(R.id.hostButton).setOnClickListener {
+            startAsHost()
+        }
+
+        findViewById<Button>(R.id.joinButton).setOnClickListener {
+            startAsClient()
+        }
+
+        playAgainBtn.setOnClickListener {
+            val nextSeed = System.currentTimeMillis()
+            gameView.resetGame(nextSeed)
+            networkManager?.sendReset(nextSeed)
+            playAgainBtn.visibility = View.GONE
+        }
+
+        setupGameControls()
+        displayLocalIp()
+    }
+
+    private fun displayLocalIp() {
+        val ip = getLocalIpAddress()
+        myIpText.text = "My IP: $ip"
+    }
+
+    private fun getLocalIpAddress(): String {
+        try {
+            val interfaces = NetworkInterface.getNetworkInterfaces()
+            while (interfaces.hasMoreElements()) {
+                val networkInterface = interfaces.nextElement()
+                val addresses = networkInterface.inetAddresses
+                while (addresses.hasMoreElements()) {
+                    val address = addresses.nextElement()
+                    if (!address.isLoopbackAddress && address is Inet4Address) {
+                        return address.hostAddress ?: "Unknown"
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return "127.0.0.1"
+    }
+
+    private fun startAsHost() {
+        val name = nameInput.text.toString()
+        val playerCar = Car(playerId, 100f, 80f, 0f, Color.RED, name) 
+        gameView.playerCar = playerCar
+        
+        networkManager = NetworkManager(
+            onCarUpdate = { car ->
+                runOnUiThread {
+                    if (car.id != playerId) {
+                        gameView.otherCars[car.id] = car
+                    }
+                }
+            },
+            onPlayerJoined = { id ->
+                runOnUiThread {
+                    Toast.makeText(this, "Player $id joined!", Toast.LENGTH_SHORT).show()
+                }
+            },
+            onWin = { winner ->
+                runOnUiThread {
+                    gameView.gameWin(winner)
+                    playAgainBtn.visibility = View.VISIBLE
+                    Toast.makeText(this, "$winner WINS!", Toast.LENGTH_LONG).show()
+                }
+            },
+            onReset = { seed ->
+                runOnUiThread {
+                    gameView.resetGame(seed)
+                    playAgainBtn.visibility = View.GONE
+                }
+            },
+            onItemCollected = { id ->
+                runOnUiThread {
+                    gameView.disableItem(id)
+                }
+            }
+        )
+        val seed = System.currentTimeMillis()
+        gameView.setMazeSeed(seed)
+        gameView.isHost = true
+        
+        val botRadio = findViewById<RadioGroup>(R.id.botRadioGroup)
+        val botCount = when (botRadio.checkedRadioButtonId) {
+            R.id.bot1 -> 1
+            R.id.bot2 -> 2
+            else -> 0
+        }
+        
+        val speedRadio = findViewById<RadioGroup>(R.id.botSpeedRadioGroup)
+        val botSpeed = when (speedRadio.checkedRadioButtonId) {
+            R.id.speedSlow -> 0.25f
+            R.id.speedFast -> 0.65f
+            else -> 0.45f
+        }
+        
+        gameView.setupBots(botCount, botSpeed)
+
+        networkManager?.startHost(seed)
+        
+        findViewById<LinearLayout>(R.id.hostControlsLayout).visibility = View.VISIBLE
+
+        findViewById<Button>(R.id.restartHostBtn).setOnClickListener {
+            val nextSeed = System.currentTimeMillis()
+            gameView.resetGame(nextSeed)
+            networkManager?.sendReset(nextSeed)
+            playAgainBtn.visibility = View.GONE
+        }
+
+        findViewById<Button>(R.id.endHostBtn).setOnClickListener {
+            val endMsg = "Match Ended by Host"
+            gameView.gameWin(endMsg)
+            networkManager?.sendWin(endMsg)
+            playAgainBtn.visibility = View.VISIBLE
+        }
+        
+        showGame()
+        
+        gameView.onPositionUpdate = { car ->
+            networkManager?.sendUpdate(car)
+        }
+
+        gameView.onWin = { winner ->
+            networkManager?.sendWin(winner)
+            playAgainBtn.visibility = View.VISIBLE
+            Toast.makeText(this, "YOU WIN!", Toast.LENGTH_LONG).show()
+        }
+
+        gameView.onItemPickedUp = { id ->
+            networkManager?.sendItemCollected(id)
+        }
+
+        gameView.onItemDropped = { id ->
+            networkManager?.sendItemDropped(id)
+        }
+        networkManager?.onItemDropped = { id ->
+            runOnUiThread { gameView.enableItem(id) }
+        }
+    }
+
+    private fun startAsClient() {
+        val manualIp = ipInput.text.toString().trim()
+        
+        networkManager = NetworkManager(
+            onCarUpdate = { car ->
+                runOnUiThread {
+                    if (car.id != playerId) {
+                        gameView.otherCars[car.id] = car
+                    }
+                }
+            },
+            onPlayerJoined = {},
+            onWin = { winner ->
+                runOnUiThread {
+                    gameView.gameWin(winner)
+                    Toast.makeText(this, "$winner WINS!", Toast.LENGTH_LONG).show()
+                }
+            },
+            onReset = { seed ->
+                runOnUiThread {
+                    gameView.resetGame(seed)
+                }
+            },
+            onItemCollected = { id ->
+                runOnUiThread {
+                    gameView.disableItem(id)
+                }
+            }
+        )
+
+        if (manualIp.isNotEmpty()) {
+            statusText.text = "Connecting to $manualIp..."
+            connectToHost(manualIp)
+        } else {
+            statusText.text = "Searching for hosts automatically..."
+            networkManager?.findHosts { ip, seed ->
+                hostIp = ip
+                runOnUiThread {
+                    statusText.text = "Found host at $ip. Connecting..."
+                    gameView.setMazeSeed(seed)
+                    connectToHost(ip)
+                }
+            }
+        }
+    }
+
+    private fun connectToHost(ip: String) {
+        val name = nameInput.text.toString()
+        val playerCar = Car(playerId, 100f, 150f, 0f, Color.BLUE, name) 
+        gameView.playerCar = playerCar
+        
+        this.hostIp = ip // Ensure local variable is set for manual IP flow
+        gameView.isHost = false
+        gameView.setupBots(0, 0f)
+        networkManager?.connectToHost(ip)
+        
+        findViewById<LinearLayout>(R.id.hostControlsLayout).visibility = View.GONE
+        
+        showGame()
+        
+        gameView.onPositionUpdate = { car ->
+            networkManager?.sendUpdate(car, hostIp)
+        }
+
+        gameView.onWin = { winner ->
+            networkManager?.sendWin(winner) // Need to ensure client can send to host
+            Toast.makeText(this, "YOU WIN!", Toast.LENGTH_LONG).show()
+        }
+
+        gameView.onItemPickedUp = { id ->
+            networkManager?.sendItemCollected(id)
+        }
+
+        gameView.onItemDropped = { id ->
+            networkManager?.sendItemDropped(id)
+        }
+        networkManager?.onItemDropped = { id ->
+            runOnUiThread { gameView.enableItem(id) }
+        }
+    }
+
+    private fun showGame() {
+        menuLayout.visibility = View.GONE
+        gameLayout.visibility = View.VISIBLE
+    }
+
+    private fun setupGameControls() {
+        findViewById<Button>(R.id.leftBtn).setOnTouchListener { _, event ->
+            when(event.action) {
+                MotionEvent.ACTION_DOWN -> isLeftPressed = true
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> isLeftPressed = false
+            }
+            gameView.handleInput(isLeftPressed, isRightPressed, isAccelPressed)
+            true
+        }
+
+        findViewById<Button>(R.id.rightBtn).setOnTouchListener { _, event ->
+            when(event.action) {
+                MotionEvent.ACTION_DOWN -> isRightPressed = true
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> isRightPressed = false
+            }
+            gameView.handleInput(isLeftPressed, isRightPressed, isAccelPressed)
+            true
+        }
+
+        findViewById<Button>(R.id.accelBtn).setOnTouchListener { _, event ->
+            when(event.action) {
+                MotionEvent.ACTION_DOWN -> isAccelPressed = true
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> isAccelPressed = false
+            }
+            gameView.handleInput(isLeftPressed, isRightPressed, isAccelPressed)
+            true
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        networkManager?.stop()
+    }
+}

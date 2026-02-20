@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:id="@+id/menuLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp"
+        android:background="#121212">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TURBO RACING"
+            android:textColor="#FF4081"
+            android:textSize="42sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="48dp"/>
+
+        <EditText
+            android:id="@+id/nameInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Player Name"
+            android:textColorHint="#888"
+            android:textColor="#FFF"
+            android:backgroundTint="#FF4081"
+            android:layout_marginBottom="12dp"
+            android:text="Player1"/>
+
+        <EditText
+            android:id="@+id/ipInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Host IP (Optional for Auto)"
+            android:textColorHint="#888"
+            android:textColor="#FFF"
+            android:backgroundTint="#3F51B5"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bot Players (Host Only):"
+            android:textColor="#FFF"/>
+        <RadioGroup
+            android:id="@+id/botRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+            <RadioButton
+                android:id="@+id/bot0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 Bot"
+                android:textColor="#FFF"
+                android:checked="true"/>
+            <RadioButton
+                android:id="@+id/bot1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1 Bot"
+                android:layout_marginStart="16dp"
+                android:textColor="#FFF"/>
+            <RadioButton
+                android:id="@+id/bot2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2 Bot"
+                android:layout_marginStart="16dp"
+                android:textColor="#FFF"/>
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bot Speed:"
+            android:textColor="#FFF"/>
+        <RadioGroup
+            android:id="@+id/botSpeedRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+            <RadioButton
+                android:id="@+id/speedSlow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lambat"
+                android:textColor="#FFF"/>
+            <RadioButton
+                android:id="@+id/speedMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sedang"
+                android:layout_marginStart="16dp"
+                android:textColor="#FFF"
+                android:checked="true"/>
+            <RadioButton
+                android:id="@+id/speedFast"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cepat"
+                android:layout_marginStart="16dp"
+                android:textColor="#FFF"/>
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/hostButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="HOST GAME"
+            android:backgroundTint="#FF4081"
+            android:textColor="#FFF"
+            android:layout_marginBottom="16dp"/>
+
+        <Button
+            android:id="@+id/joinButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="JOIN GAME"
+            android:backgroundTint="#3F51B5"
+            android:textColor="#FFF"
+            android:layout_marginBottom="16dp"/>
+            
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select an option to start"
+            android:textColor="#AAA"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/myIpText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="My IP: ---"
+            android:textColor="#00E676"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/gameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <com.hanyajasa.gamemobilbalapmultiplayer.GameView
+            android:id="@+id/gameView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+            
+        <LinearLayout
+            android:id="@+id/hostControlsLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:visibility="gone">
+            <Button
+                android:id="@+id/restartHostBtn"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="RESTART"
+                android:backgroundTint="#FF9800"
+                android:textSize="12sp"
+                android:layout_marginBottom="8dp"/>
+            <Button
+                android:id="@+id/endHostBtn"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="END GAME"
+                android:backgroundTint="#F44336"
+                android:textSize="12sp"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/playAgainBtn"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true"
+            android:text="MAIN LAGI"
+            android:backgroundTint="#FFC107"
+            android:textColor="#000"
+            android:textStyle="bold"
+            android:visibility="gone"/>
+
+        <!-- Controls -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:padding="20dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                
+                <Button
+                    android:id="@+id/leftBtn"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:text="←"
+                    android:backgroundTint="#55FFFFFF"/>
+                
+                <Button
+                    android:id="@+id/rightBtn"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:text="→"
+                    android:backgroundTint="#55FFFFFF"
+                    android:layout_marginStart="10dp"/>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/accelBtn"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:text="GAS"
+                android:backgroundTint="#55FF4081"/>
+        </LinearLayout>
+    </RelativeLayout>
+</FrameLayout>
