@@ -6,4 +6,9 @@
     </style>
 
     <style name="Theme.GameMobilBalapMultiPlayer" parent="Base.Theme.GameMobilBalapMultiPlayer" />
+
+    <style name="DarkPopupMenu" parent="Widget.Material3.PopupMenu">
+        <item name="android:itemBackground">#222222</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
 </resources>

@@ -165,15 +165,16 @@
             
         <Button
             android:id="@+id/hostMenuBtn"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_margin="16dp"
             android:text="@string/menu_icon"
-            android:textSize="20sp"
+            android:textSize="24sp"
             android:textColor="#FFFFFF"
-            android:backgroundTint="#88000000"
+            android:backgroundTint="#FF4081"
+            android:elevation="8dp"
             android:visibility="gone"/>
 
         <Button

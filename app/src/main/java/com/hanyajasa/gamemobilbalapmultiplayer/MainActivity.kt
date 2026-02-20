@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
+import androidx.appcompat.view.ContextThemeWrapper
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import java.net.Inet4Address
@@ -152,7 +153,7 @@ class MainActivity : AppCompatActivity() {
         val hostMenuBtn = findViewById<Button>(R.id.hostMenuBtn)
         hostMenuBtn.visibility = View.VISIBLE
         hostMenuBtn.setOnClickListener {
-            val popup = PopupMenu(this, hostMenuBtn)
+            val popup = PopupMenu(ContextThemeWrapper(this, R.style.DarkPopupMenu), hostMenuBtn)
             popup.menu.add(0, 1, 0, getString(R.string.restart_menu))
             popup.menu.add(0, 2, 0, getString(R.string.finish_game_menu))
             popup.setOnMenuItemClickListener { item ->
