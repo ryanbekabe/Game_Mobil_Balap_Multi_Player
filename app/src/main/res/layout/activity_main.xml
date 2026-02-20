@@ -19,7 +19,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TURBO RACING"
+            android:text="@string/app_title"
             android:textColor="#FF4081"
             android:textSize="42sp"
             android:textStyle="bold"
@@ -29,18 +29,18 @@
             android:id="@+id/nameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Player Name"
+            android:hint="@string/player_name_hint"
             android:textColorHint="#888"
             android:textColor="#FFF"
             android:backgroundTint="#FF4081"
             android:layout_marginBottom="12dp"
-            android:text="Player1"/>
+            android:text="@string/default_player_name"/>
 
         <EditText
             android:id="@+id/ipInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Host IP (Optional for Auto)"
+            android:hint="@string/ip_host_hint"
             android:textColorHint="#888"
             android:textColor="#FFF"
             android:backgroundTint="#3F51B5"
@@ -49,7 +49,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Bot Players (Host Only):"
+            android:text="@string/bot_players_label"
             android:textColor="#FFF"/>
         <RadioGroup
             android:id="@+id/botRadioGroup"
@@ -61,21 +61,21 @@
                 android:id="@+id/bot0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0 Bot"
+                android:text="@string/bot_0"
                 android:textColor="#FFF"
                 android:checked="true"/>
             <RadioButton
                 android:id="@+id/bot1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1 Bot"
+                android:text="@string/bot_1"
                 android:layout_marginStart="16dp"
                 android:textColor="#FFF"/>
             <RadioButton
                 android:id="@+id/bot2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2 Bot"
+                android:text="@string/bot_2"
                 android:layout_marginStart="16dp"
                 android:textColor="#FFF"/>
         </RadioGroup>
@@ -83,7 +83,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Bot Speed:"
+            android:text="@string/bot_speed_label"
             android:textColor="#FFF"/>
         <RadioGroup
             android:id="@+id/botSpeedRadioGroup"
@@ -95,13 +95,13 @@
                 android:id="@+id/speedSlow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Lambat"
+                android:text="@string/speed_slow"
                 android:textColor="#FFF"/>
             <RadioButton
                 android:id="@+id/speedMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sedang"
+                android:text="@string/speed_medium"
                 android:layout_marginStart="16dp"
                 android:textColor="#FFF"
                 android:checked="true"/>
@@ -109,7 +109,7 @@
                 android:id="@+id/speedFast"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cepat"
+                android:text="@string/speed_fast"
                 android:layout_marginStart="16dp"
                 android:textColor="#FFF"/>
         </RadioGroup>
@@ -118,7 +118,7 @@
             android:id="@+id/hostButton"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="HOST GAME"
+            android:text="@string/host_game_btn"
             android:backgroundTint="#FF4081"
             android:textColor="#FFF"
             android:layout_marginBottom="16dp"/>
@@ -127,7 +127,7 @@
             android:id="@+id/joinButton"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="JOIN GAME"
+            android:text="@string/join_game_btn"
             android:backgroundTint="#3F51B5"
             android:textColor="#FFF"
             android:layout_marginBottom="16dp"/>
@@ -136,7 +136,7 @@
             android:id="@+id/statusText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Select an option to start"
+            android:text="@string/status_default"
             android:textColor="#AAA"
             android:textSize="14sp"
             android:layout_marginBottom="8dp"/>
@@ -145,7 +145,7 @@
             android:id="@+id/myIpText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="My IP: ---"
+            android:text="@string/my_ip_placeholder"
             android:textColor="#00E676"
             android:textSize="16sp"
             android:textStyle="bold"/>
@@ -170,7 +170,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_margin="16dp"
-            android:text="☰"
+            android:text="@string/menu_icon"
             android:textSize="20sp"
             android:textColor="#FFFFFF"
             android:backgroundTint="#88000000"
@@ -181,7 +181,7 @@
             android:layout_width="200dp"
             android:layout_height="60dp"
             android:layout_centerInParent="true"
-            android:text="MAIN LAGI"
+            android:text="@string/play_again_btn"
             android:backgroundTint="#FFC107"
             android:textColor="#000"
             android:textStyle="bold"
@@ -205,14 +205,14 @@
                     android:id="@+id/leftBtn"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:text="←"
+                    android:text="@string/left_arrow"
                     android:backgroundTint="#55FFFFFF"/>
                 
                 <Button
                     android:id="@+id/rightBtn"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:text="→"
+                    android:text="@string/right_arrow"
                     android:backgroundTint="#55FFFFFF"
                     android:layout_marginStart="10dp"/>
             </LinearLayout>
@@ -221,7 +221,7 @@
                 android:id="@+id/accelBtn"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:text="GAS"
+                android:text="@string/accel_btn"
                 android:backgroundTint="#55FF4081"/>
         </LinearLayout>
     </RelativeLayout>

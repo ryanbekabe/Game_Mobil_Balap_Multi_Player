@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun displayLocalIp() {
         val ip = getLocalIpAddress()
-        myIpText.text = "My IP: $ip"
+        myIpText.text = getString(R.string.my_ip_label, ip)
     }
 
     private fun getLocalIpAddress(): String {
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                 while (addresses.hasMoreElements()) {
                     val address = addresses.nextElement()
                     if (!address.isLoopbackAddress && address is Inet4Address) {
-                        return address.hostAddress ?: "Unknown"
+                        return address.hostAddress ?: getString(R.string.unknown_ip)
                     }
                 }
             }
@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity() {
             },
             onPlayerJoined = { id ->
                 runOnUiThread {
-                    Toast.makeText(this, "Player $id joined!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.player_joined, id), Toast.LENGTH_SHORT).show()
                 }
             },
             onWin = { winner ->
@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         gameView.gameWin(winner)
                         playAgainBtn.visibility = View.VISIBLE
-                        Toast.makeText(this, "$winner WINS!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, getString(R.string.player_wins, winner), Toast.LENGTH_LONG).show()
                     }
                 }
             },
@@ -152,9 +152,9 @@ class MainActivity : AppCompatActivity() {
         val hostMenuBtn = findViewById<Button>(R.id.hostMenuBtn)
         hostMenuBtn.visibility = View.VISIBLE
         hostMenuBtn.setOnClickListener {
-            val popup = android.widget.PopupMenu(this, hostMenuBtn)
-            popup.menu.add(0, 1, 0, "Restart")
-            popup.menu.add(0, 2, 0, "Akhiri game")
+            val popup = PopupMenu(this, hostMenuBtn)
+            popup.menu.add(0, 1, 0, getString(R.string.restart_menu))
+            popup.menu.add(0, 2, 0, getString(R.string.finish_game_menu))
             popup.setOnMenuItemClickListener { item ->
                 when(item.itemId) {
                     1 -> {
@@ -184,7 +184,7 @@ class MainActivity : AppCompatActivity() {
         gameView.onWin = { winner ->
             networkManager?.sendWin(winner)
             playAgainBtn.visibility = View.VISIBLE
-            Toast.makeText(this, "YOU WIN!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.you_win), Toast.LENGTH_LONG).show()
         }
 
         gameView.onItemPickedUp = { id ->
@@ -214,11 +214,11 @@ class MainActivity : AppCompatActivity() {
             onWin = { winner ->
                 runOnUiThread {
                     if (winner == "MATCH_ABORTED") {
-                        Toast.makeText(this, "Host ended the match", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, getString(R.string.host_ended_match), Toast.LENGTH_LONG).show()
                         showMenu()
                     } else {
                         gameView.gameWin(winner)
-                        Toast.makeText(this, "$winner WINS!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, getString(R.string.player_wins, winner), Toast.LENGTH_LONG).show()
                     }
                 }
             },
@@ -235,14 +235,14 @@ class MainActivity : AppCompatActivity() {
         )
 
         if (manualIp.isNotEmpty()) {
-            statusText.text = "Connecting to $manualIp..."
+            statusText.text = getString(R.string.connecting_to, manualIp)
             connectToHost(manualIp)
         } else {
-            statusText.text = "Searching for hosts automatically..."
+            statusText.text = getString(R.string.searching_hosts)
             networkManager?.findHosts { ip, seed ->
                 hostIp = ip
                 runOnUiThread {
-                    statusText.text = "Found host at $ip. Connecting..."
+                    statusText.text = getString(R.string.found_host, ip)
                     gameView.setMazeSeed(seed)
                     connectToHost(ip)
                 }
@@ -270,7 +270,7 @@ class MainActivity : AppCompatActivity() {
 
         gameView.onWin = { winner ->
             networkManager?.sendWin(winner) // Need to ensure client can send to host
-            Toast.makeText(this, "YOU WIN!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.you_win), Toast.LENGTH_LONG).show()
         }
 
         gameView.onItemPickedUp = { id ->
@@ -298,28 +298,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupGameControls() {
-        findViewById<Button>(R.id.leftBtn).setOnTouchListener { _, event ->
+        findViewById<Button>(R.id.leftBtn).setOnTouchListener { v, event ->
             when(event.action) {
                 MotionEvent.ACTION_DOWN -> isLeftPressed = true
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> isLeftPressed = false
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    isLeftPressed = false
+                    if (event.action == MotionEvent.ACTION_UP) v.performClick()
+                }
             }
             gameView.handleInput(isLeftPressed, isRightPressed, isAccelPressed)
             true
         }
 
-        findViewById<Button>(R.id.rightBtn).setOnTouchListener { _, event ->
+        findViewById<Button>(R.id.rightBtn).setOnTouchListener { v, event ->
             when(event.action) {
                 MotionEvent.ACTION_DOWN -> isRightPressed = true
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> isRightPressed = false
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    isRightPressed = false
+                    if (event.action == MotionEvent.ACTION_UP) v.performClick()
+                }
             }
             gameView.handleInput(isLeftPressed, isRightPressed, isAccelPressed)
             true
         }
 
-        findViewById<Button>(R.id.accelBtn).setOnTouchListener { _, event ->
+        findViewById<Button>(R.id.accelBtn).setOnTouchListener { v, event ->
             when(event.action) {
                 MotionEvent.ACTION_DOWN -> isAccelPressed = true
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> isAccelPressed = false
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    isAccelPressed = false
+                    if (event.action == MotionEvent.ACTION_UP) v.performClick()
+                }
             }
             gameView.handleInput(isLeftPressed, isRightPressed, isAccelPressed)
             true

@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">Game Mobil Balap Multi Player</string>
+    <string name="app_title">TURBO RACING</string>
+    <string name="player_name_hint">Enter Player Name</string>
+    <string name="default_player_name">Player1</string>
+    <string name="ip_host_hint">Host IP (Optional for Auto)</string>
+    <string name="bot_players_label">Bot Players (Host Only):</string>
+    <string name="bot_0">0 Bot</string>
+    <string name="bot_1">1 Bot</string>
+    <string name="bot_2">2 Bot</string>
+    <string name="bot_speed_label">Bot Speed:</string>
+    <string name="speed_slow">Lambat</string>
+    <string name="speed_medium">Sedang</string>
+    <string name="speed_fast">Cepat</string>
+    <string name="host_game_btn">HOST GAME</string>
+    <string name="join_game_btn">JOIN GAME</string>
+    <string name="status_default">Select an option to start</string>
+    <string name="my_ip_label">My IP: %1$s</string>
+    <string name="play_again_btn">MAIN LAGI</string>
+    <string name="accel_btn">GAS</string>
+    <string name="left_arrow">←</string>
+    <string name="right_arrow">→</string>
+    <string name="menu_icon">☰</string>
+    <string name="player_joined">Player %1$s joined!</string>
+    <string name="player_wins">%1$s WINS!</string>
+    <string name="you_win">YOU WIN!</string>
+    <string name="host_ended_match">Host ended the match</string>
+    <string name="connecting_to">Connecting to %1$s…</string>
+    <string name="searching_hosts">Searching for hosts automatically…</string>
+    <string name="found_host">Found host at %1$s. Connecting…</string>
+    <string name="restart_menu">Restart</string>
+    <string name="finish_game_menu">End Match</string>
+    <string name="unknown_ip">Unknown</string>
+    <string name="my_ip_placeholder">My IP: ---</string>
 </resources>
