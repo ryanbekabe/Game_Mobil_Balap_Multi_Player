@@ -43,16 +43,20 @@ class NetworkManager(
 
         // UDP Position listener
         executor.execute {
-            val socket = DatagramSocket(8890)
-            udpSocket = socket
-            val buffer = ByteArray(1024)
-            while (isHost) {
-                val packet = DatagramPacket(buffer, buffer.size)
-                socket.receive(packet)
-                val message = String(packet.data, 0, packet.length)
-                handleMessage(message, packet.socketAddress)
+            try {
+                val socket = DatagramSocket(8890)
+                udpSocket = socket
+                val buffer = ByteArray(1024)
+                while (isHost) {
+                    val packet = DatagramPacket(buffer, buffer.size)
+                    socket.receive(packet)
+                    val message = String(packet.data, 0, packet.length)
+                    handleMessage(message, packet.socketAddress)
+                }
+                socket.close()
+            } catch (e: Exception) {
+                Log.e("NetworkManager", "UDP Server error", e)
             }
-            socket.close()
         }
         
         // Broadcast existence
@@ -111,12 +115,26 @@ class NetworkManager(
                     val packet = DatagramPacket(buffer, buffer.size)
                     socket.receive(packet)
                     val message = String(packet.data, 0, packet.length)
-                    handleMessage(message, packet.socketAddress)
+                    if (message == "MATCH_ABORTED") {
+                        onWin("MATCH_ABORTED")
+                    } else {
+                        handleMessage(message, packet.socketAddress)
+                    }
                 }
             } catch (e: Exception) {
                 Log.e("NetworkManager", "Client UDP Error", e)
             }
         }
+    }
+
+    fun stop() {
+        isHost = false
+        discoveryRunning = false
+        try { serverSocket?.close() } catch(e: Exception) {}
+        try { udpSocket?.close() } catch(e: Exception) {}
+        serverSocket = null
+        udpSocket = null
+        clients.clear()
     }
 
     fun sendUpdate(car: Car, targetIp: String? = null) {
@@ -315,13 +333,5 @@ class NetworkManager(
             }
         }
     }
-    
-    fun stop() {
-        isHost = false
-        discoveryRunning = false
-        try {
-            serverSocket?.close()
-            udpSocket?.close()
-        } catch (e: Exception) {}
-    }
+    // old duplicate stop removed
 }

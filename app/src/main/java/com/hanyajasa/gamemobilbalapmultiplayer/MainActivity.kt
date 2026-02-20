@@ -106,9 +106,13 @@ class MainActivity : AppCompatActivity() {
             },
             onWin = { winner ->
                 runOnUiThread {
-                    gameView.gameWin(winner)
-                    playAgainBtn.visibility = View.VISIBLE
-                    Toast.makeText(this, "$winner WINS!", Toast.LENGTH_LONG).show()
+                    if (winner == "MATCH_ABORTED") {
+                        showMenu()
+                    } else {
+                        gameView.gameWin(winner)
+                        playAgainBtn.visibility = View.VISIBLE
+                        Toast.makeText(this, "$winner WINS!", Toast.LENGTH_LONG).show()
+                    }
                 }
             },
             onReset = { seed ->
@@ -145,20 +149,30 @@ class MainActivity : AppCompatActivity() {
 
         networkManager?.startHost(seed)
         
-        findViewById<LinearLayout>(R.id.hostControlsLayout).visibility = View.VISIBLE
-
-        findViewById<Button>(R.id.restartHostBtn).setOnClickListener {
-            val nextSeed = System.currentTimeMillis()
-            gameView.resetGame(nextSeed)
-            networkManager?.sendReset(nextSeed)
-            playAgainBtn.visibility = View.GONE
-        }
-
-        findViewById<Button>(R.id.endHostBtn).setOnClickListener {
-            val endMsg = "Match Ended by Host"
-            gameView.gameWin(endMsg)
-            networkManager?.sendWin(endMsg)
-            playAgainBtn.visibility = View.VISIBLE
+        val hostMenuBtn = findViewById<Button>(R.id.hostMenuBtn)
+        hostMenuBtn.visibility = View.VISIBLE
+        hostMenuBtn.setOnClickListener {
+            val popup = android.widget.PopupMenu(this, hostMenuBtn)
+            popup.menu.add(0, 1, 0, "Restart")
+            popup.menu.add(0, 2, 0, "Akhiri game")
+            popup.setOnMenuItemClickListener { item ->
+                when(item.itemId) {
+                    1 -> {
+                        val nextSeed = System.currentTimeMillis()
+                        gameView.resetGame(nextSeed)
+                        networkManager?.sendReset(nextSeed)
+                        playAgainBtn.visibility = View.GONE
+                    }
+                    2 -> {
+                        val endMsg = "MATCH_ABORTED"
+                        gameView.gameWin(endMsg)
+                        networkManager?.sendWin(endMsg)
+                        showMenu()
+                    }
+                }
+                true
+            }
+            popup.show()
         }
         
         showGame()
@@ -199,8 +213,13 @@ class MainActivity : AppCompatActivity() {
             onPlayerJoined = {},
             onWin = { winner ->
                 runOnUiThread {
-                    gameView.gameWin(winner)
-                    Toast.makeText(this, "$winner WINS!", Toast.LENGTH_LONG).show()
+                    if (winner == "MATCH_ABORTED") {
+                        Toast.makeText(this, "Host ended the match", Toast.LENGTH_LONG).show()
+                        showMenu()
+                    } else {
+                        gameView.gameWin(winner)
+                        Toast.makeText(this, "$winner WINS!", Toast.LENGTH_LONG).show()
+                    }
                 }
             },
             onReset = { seed ->
@@ -241,7 +260,7 @@ class MainActivity : AppCompatActivity() {
         gameView.setupBots(0, 0f)
         networkManager?.connectToHost(ip)
         
-        findViewById<LinearLayout>(R.id.hostControlsLayout).visibility = View.GONE
+        findViewById<Button>(R.id.hostMenuBtn).visibility = View.GONE
         
         showGame()
         
@@ -269,6 +288,13 @@ class MainActivity : AppCompatActivity() {
     private fun showGame() {
         menuLayout.visibility = View.GONE
         gameLayout.visibility = View.VISIBLE
+    }
+
+    private fun showMenu() {
+        gameLayout.visibility = View.GONE
+        menuLayout.visibility = View.VISIBLE
+        networkManager?.stop()
+        networkManager = null
     }
 
     private fun setupGameControls() {
