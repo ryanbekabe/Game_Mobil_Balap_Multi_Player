@@ -17,7 +17,7 @@ class NetworkManager(
     private var udpSocket: DatagramSocket? = null
     private var isHost = false
     private var hostAddress: InetAddress? = null
-    private val clients = ConcurrentHashMap<String, java.net.SocketAddress>()
+    private val clients = ConcurrentHashMap<String, SocketAddress>()
     
     private var discoveryRunning = false
     private var mazeSeed: Long = 0
@@ -32,9 +32,7 @@ class NetworkManager(
                 serverSocket = ServerSocket(8889)
                 Log.d("NetworkManager", "Server started on 8889")
                 while (isHost) {
-                    val socket = serverSocket?.accept()
-                    // Handle client connection (lobby etc)
-                    // For now just keep it simple
+                    serverSocket?.accept()?.close() // Accept and close for simple lobby placeholder
                 }
             } catch (e: Exception) {
                 Log.e("NetworkManager", "Server error", e)
@@ -85,15 +83,16 @@ class NetworkManager(
                         val message = String(packet.data, 0, packet.length)
                         if (message.startsWith("RACING_HOST_IS_HERE")) {
                             val seed = if (message.contains(":")) message.split(":")[1].toLong() else 0L
-                            onHostFound(packet.address.hostAddress, seed)
+                            val hostIpStr = packet.address.hostAddress ?: "0.0.0.0"
+                            onHostFound(hostIpStr, seed)
                         }
                     } catch (e: SocketTimeoutException) {
                         break
                     }
                 }
                 socket.close()
-            } catch (e: Exception) {
-                Log.e("NetworkManager", "Discovery error", e)
+            } catch (_: Exception) {
+                Log.e("NetworkManager", "Discovery error")
             }
         }
     }
@@ -130,8 +129,8 @@ class NetworkManager(
     fun stop() {
         isHost = false
         discoveryRunning = false
-        try { serverSocket?.close() } catch(e: Exception) {}
-        try { udpSocket?.close() } catch(e: Exception) {}
+        try { serverSocket?.close() } catch(_: Exception) {}
+        try { udpSocket?.close() } catch(_: Exception) {}
         serverSocket = null
         udpSocket = null
         clients.clear()
@@ -163,14 +162,14 @@ class NetworkManager(
         }
     }
 
-    private fun sendSeedToClient(address: java.net.SocketAddress) {
+    private fun sendSeedToClient(address: SocketAddress) {
         executor.execute {
             try {
                 val message = "SEED:$mazeSeed"
                 val data = message.toByteArray()
                 val packet = DatagramPacket(data, data.size, address)
                 udpSocket?.send(packet)
-            } catch (e: Exception) {}
+            } catch (_: Exception) {}
         }
     }
 
@@ -191,7 +190,7 @@ class NetworkManager(
                         socket.send(packet)
                     }
                 }
-            } catch (e: Exception) {}
+            } catch (_: Exception) {}
         }
     }
 
@@ -212,7 +211,7 @@ class NetworkManager(
                         socket.send(packet)
                     }
                 }
-            } catch (e: Exception) {}
+            } catch (_: Exception) {}
         }
     }
 
@@ -233,7 +232,7 @@ class NetworkManager(
                         socket.send(packet)
                     }
                 }
-            } catch (e: Exception) {}
+            } catch (_: Exception) {}
         }
     }
 
@@ -250,11 +249,11 @@ class NetworkManager(
                         socket.send(packet)
                     }
                 }
-            } catch (e: Exception) {}
+            } catch (_: Exception) {}
         }
     }
 
-    private fun handleMessage(message: String, fromAddress: java.net.SocketAddress) {
+    private fun handleMessage(message: String, fromAddress: SocketAddress) {
         if (message.startsWith("UPDATE:")) {
             val parts = message.split(":")
             if (parts.size >= 10) {
@@ -295,7 +294,7 @@ class NetworkManager(
                                 socket.send(packet)
                             }
                         }
-                    } catch (e: Exception) {}
+                    } catch (_: Exception) {}
                 }
             }
         } else if (message.startsWith("DROP:")) {
@@ -313,7 +312,7 @@ class NetworkManager(
                                 socket.send(packet)
                             }
                         }
-                    } catch (e: Exception) {}
+                    } catch (_: Exception) {}
                 }
             }
         }

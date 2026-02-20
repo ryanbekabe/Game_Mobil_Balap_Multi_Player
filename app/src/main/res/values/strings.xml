@@ -2,7 +2,7 @@
     <string name="app_name">Game Mobil Balap Multi Player</string>
     <string name="app_title">TURBO RACING</string>
     <string name="player_name_hint">Enter Player Name</string>
-    <string name="default_player_name">Player1</string>
+    <string name="default_player_name">Player 1</string>
     <string name="ip_host_hint">Host IP (Optional for Auto)</string>
     <string name="bot_players_label">Bot Players (Host Only):</string>
     <string name="bot_0">0 Bot</string>
