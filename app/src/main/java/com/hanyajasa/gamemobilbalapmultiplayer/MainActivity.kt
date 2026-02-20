@@ -1,5 +1,6 @@
 package com.hanyajasa.gamemobilbalapmultiplayer
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.view.MotionEvent
@@ -298,6 +299,7 @@ class MainActivity : AppCompatActivity() {
         networkManager = null
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupGameControls() {
         findViewById<Button>(R.id.leftBtn).setOnTouchListener { v, event ->
             when(event.action) {
