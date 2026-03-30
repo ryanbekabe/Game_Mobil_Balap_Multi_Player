@@ -1,6 +1,7 @@
 # Game Mobil Balap Multi Player 🏎️💨
 
 https://github.com/ryanbekabe/Game_Mobil_Balap_Multi_Player
+Commit 11
 
 Game Mobil Balap Multi Player adalah sebuah game balap mobil bergaya "Top-Down Racer & Battle Royale" yang dibangun menggunakan bahasa Kotlin untuk platform Android. Proyek ini mendemonstrasikan bagaimana membangun sebuah game multiplayer lokal real-time melalui jaringan UDP (LAN/WiFi) secara mandiri dari nol (tanpa third-party game engine seperti Unity atau Unreal).
 
