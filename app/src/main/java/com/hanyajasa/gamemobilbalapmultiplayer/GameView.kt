@@ -222,6 +222,56 @@ class GameView @JvmOverloads constructor(
         }
     }
 
+    private fun handleCarCollision(car: Car, other: Car) {
+        val dx = other.x - car.x
+        val dy = other.y - car.y
+        val dist = Math.sqrt((dx * dx + dy * dy).toDouble()).toFloat()
+        val minDist = 45f // Jarak minimum tabrakan mobil (30x20 rect)
+
+        if (dist < minDist && dist > 0) {
+            // Hitung kecepatan relatif
+            val relVelX = car.velX - other.velX
+            val relVelY = car.velY - other.velY
+            val relSpeed = Math.sqrt((relVelX * relVelX + relVelY * relVelY).toDouble()).toFloat()
+
+            if (relSpeed > 2f) { // Hanya tabrakan cukup keras yang berdampak
+                val damage = (relSpeed * 2).toInt()
+                car.hp -= damage
+                other.hp -= damage
+                
+                // Efek suara tabrakan
+                toneGen.startTone(ToneGenerator.TONE_CDMA_SOFT_ERROR_LITE, 100)
+                
+                // Partikel benturan
+                val midX = (car.x + other.x) / 2
+                val midY = (car.y + other.y) / 2
+                for (i in 0 until 8) {
+                    val pAngle = Math.random() * Math.PI * 2
+                    val pSpeed = Math.random() * 5 + 2
+                    particles.add(Particle(midX, midY, (pSpeed * Math.cos(pAngle)).toFloat(), (pSpeed * Math.sin(pAngle)).toFloat(), 12, 12, Color.WHITE, 4f))
+                }
+
+                // Bounce Effect (Sederhana: Tukar momentum atau pantul balik)
+                val nx = dx / dist
+                val ny = dy / dist
+                
+                val p = 2f * (car.velX * nx + car.velY * ny - other.velX * nx - other.velY * ny) / 2f
+                
+                car.velX -= p * nx * 0.8f
+                car.velY -= p * ny * 0.8f
+                other.velX += p * nx * 0.8f
+                other.velY += p * ny * 0.8f
+                
+                // Pisahkan sedikit agar tidak nempel
+                val overlap = minDist - dist
+                car.x -= nx * overlap / 2
+                car.y -= ny * overlap / 2
+                other.x += nx * overlap / 2
+                other.y += ny * overlap / 2
+            }
+        }
+    }
+
     private fun update() {
         val iterator = skidMarks.iterator()
         while(iterator.hasNext()) {
@@ -319,6 +369,14 @@ class GameView @JvmOverloads constructor(
                 val radSide = Math.toRadians((car.angle + 90).toDouble())
                 skidMarks.add(SkidMark(rearX + 10f * cos(radSide).toFloat(), rearY + 10f * sin(radSide).toFloat()))
                 skidMarks.add(SkidMark(rearX - 10f * cos(radSide).toFloat(), rearY - 10f * sin(radSide).toFloat()))
+            }
+
+            // --- CAR TO CAR COLLISIONS ---
+            for (other in otherCars.values) {
+                if (!other.isDead) handleCarCollision(car, other)
+            }
+            for (bot in botPlayers) {
+                if (!bot.isDead) handleCarCollision(car, bot)
             }
 
             val nextX = car.x + car.velX
@@ -536,6 +594,15 @@ class GameView @JvmOverloads constructor(
         if (isHost && !gameEnded) {
             for (bot in botPlayers) {
                 if (bot.isDead) continue
+
+                // Bot collision with other cars (Host handles this)
+                playerCar?.let { if (!it.isDead) handleCarCollision(bot, it) }
+                for (otherBot in botPlayers) {
+                    if (otherBot.id != bot.id && !otherBot.isDead) handleCarCollision(bot, otherBot)
+                }
+                for (remoteCar in otherCars.values) {
+                    if (!remoteCar.isDead) handleCarCollision(bot, remoteCar)
+                }
 
                 var targetX = finishLine.centerX()
                 var targetY = finishLine.centerY()
