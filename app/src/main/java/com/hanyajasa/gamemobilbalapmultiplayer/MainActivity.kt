@@ -88,9 +88,19 @@ class MainActivity : AppCompatActivity() {
         return "127.0.0.1"
     }
 
+    private fun getSelectedCarClass(): CarClass {
+        val classRadio = findViewById<RadioGroup>(R.id.classRadioGroup)
+        return when (classRadio.checkedRadioButtonId) {
+            R.id.classTank -> CarClass.TANK
+            R.id.classCollector -> CarClass.COLLECTOR
+            else -> CarClass.SPEEDSTER
+        }
+    }
+
     private fun startAsHost() {
         val name = nameInput.text.toString()
-        val playerCar = Car(playerId, 100f, 80f, 0f, Color.RED, name) 
+        val carClass = getSelectedCarClass()
+        val playerCar = Car(playerId, 100f, 80f, 0f, Color.RED, name, carClass = carClass) 
         gameView.playerCar = playerCar
         
         networkManager = NetworkManager(
@@ -254,7 +264,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun connectToHost(ip: String) {
         val name = nameInput.text.toString()
-        val playerCar = Car(playerId, 100f, 150f, 0f, Color.BLUE, name) 
+        val carClass = getSelectedCarClass()
+        val playerCar = Car(playerId, 100f, 150f, 0f, Color.BLUE, name, carClass = carClass)
         gameView.playerCar = playerCar
         
         this.hostIp = ip // Ensure local variable is set for manual IP flow

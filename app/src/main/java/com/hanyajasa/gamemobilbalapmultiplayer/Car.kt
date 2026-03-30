@@ -1,5 +1,7 @@
 package com.hanyajasa.gamemobilbalapmultiplayer
 
+enum class CarClass { SPEEDSTER, TANK, COLLECTOR }
+
 data class Car(
     val id: String,
     var x: Float,
@@ -11,5 +13,6 @@ data class Car(
     var velY: Float = 0f,
     var coins: Int = 0,
     var hp: Int = 100,
-    var isDead: Boolean = false
+    var isDead: Boolean = false,
+    var carClass: CarClass = CarClass.SPEEDSTER
 )
