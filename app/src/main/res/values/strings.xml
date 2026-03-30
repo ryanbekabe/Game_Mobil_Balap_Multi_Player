@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Game Mobil Balap Multi Player</string>
     <string name="app_title">TURBO RACING</string>
+    <string name="app_subtitle">MULTIPLAYER RACING</string>
+    <string name="label_player_profile">PLAYER PROFILE</string>
+    <string name="label_join_settings">JOIN SETTINGS</string>
     <string name="player_name_hint">Enter Player Name</string>
     <string name="default_player_name">Player 1</string>
     <string name="ip_host_hint">Host IP (Optional for Auto)</string>
@@ -32,4 +35,9 @@
     <string name="finish_game_menu">End Match</string>
     <string name="unknown_ip">Unknown</string>
     <string name="my_ip_placeholder">My IP: ---</string>
+
+    <string name="desc_menu">Menu</string>
+    <string name="desc_left">Steer Left</string>
+    <string name="desc_right">Steer Right</string>
+    <string name="desc_accel">Accelerate</string>
 </resources>

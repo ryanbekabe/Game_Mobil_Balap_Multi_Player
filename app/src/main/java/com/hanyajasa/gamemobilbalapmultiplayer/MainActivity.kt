@@ -151,7 +151,7 @@ class MainActivity : AppCompatActivity() {
 
         networkManager?.startHost(seed)
         
-        val hostMenuBtn = findViewById<Button>(R.id.hostMenuBtn)
+        val hostMenuBtn = findViewById<ImageButton>(R.id.hostMenuBtn)
         hostMenuBtn.visibility = View.VISIBLE
         hostMenuBtn.setOnClickListener {
             val popup = PopupMenu(ContextThemeWrapper(this, R.style.DarkPopupMenu), hostMenuBtn)
@@ -262,7 +262,7 @@ class MainActivity : AppCompatActivity() {
         gameView.setupBots(0, 0f)
         networkManager?.connectToHost(ip)
         
-        findViewById<Button>(R.id.hostMenuBtn).visibility = View.GONE
+        findViewById<ImageButton>(R.id.hostMenuBtn).visibility = View.GONE
         
         showGame()
         
@@ -301,7 +301,7 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setupGameControls() {
-        findViewById<Button>(R.id.leftBtn).setOnTouchListener { v, event ->
+        findViewById<ImageButton>(R.id.leftBtn).setOnTouchListener { v, event ->
             when(event.action) {
                 MotionEvent.ACTION_DOWN -> isLeftPressed = true
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -313,7 +313,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        findViewById<Button>(R.id.rightBtn).setOnTouchListener { v, event ->
+        findViewById<ImageButton>(R.id.rightBtn).setOnTouchListener { v, event ->
             when(event.action) {
                 MotionEvent.ACTION_DOWN -> isRightPressed = true
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -325,7 +325,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        findViewById<Button>(R.id.accelBtn).setOnTouchListener { v, event ->
+        findViewById<ImageButton>(R.id.accelBtn).setOnTouchListener { v, event ->
             when(event.action) {
                 MotionEvent.ACTION_DOWN -> isAccelPressed = true
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
